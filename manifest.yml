@@ -1,0 +1,41 @@
+display_information:
+  name: channel merge
+features:
+  bot_user:
+    display_name: channel merge
+    always_online: false
+  slash_commands:
+    - command: /twingate_add_all_ext_channel
+      description: Add all ext- channels
+      should_escape: false
+    - command: /twingate_create_logs_channel
+      description: Create log channel
+      should_escape: false
+    - command: /twingate_create_ext_all_channel
+      description: Create ext-all channel
+      should_escape: false
+oauth_config:
+  scopes:
+    bot:
+      - commands
+      - app_mentions:read
+      - channels:history
+      - channels:join
+      - channels:manage
+      - channels:read
+      - chat:write
+      - users:read
+      - users:read.email
+      - im:history
+settings:
+  event_subscriptions:
+    bot_events:
+      - app_mention
+      - channel_created
+      - message.channels
+      - message.im
+  interactivity:
+    is_enabled: true
+  org_deploy_enabled: false
+  socket_mode_enabled: true
+  token_rotation_enabled: false
