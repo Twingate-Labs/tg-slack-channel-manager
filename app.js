@@ -4,18 +4,9 @@ require("dotenv").config();
 const updateDotenv = require('update-dotenv');
 const {SecretManagerServiceClient} = require('@google-cloud/secret-manager');
 
-let mergedChannelId = process.env.MERGED_CHANNEL_ID
-// let logChannelId = process.env.LOGS_CHANNEL_ID
-let logString = "";
 
-async function slackBotInit () {
-    const app = new App({
-        token: await accessSecretVersion('bot-token'),
-        signingSecret: await accessSecretVersion('client-signing-secret')
-        // socketMode:true, // enable the following to use socket mode
-        // appToken: process.env.APP_TOKEN
-    });
 
+function initApp(app){
 
     app.message('', async ({ message, client, say,logger }) => {
         const userResult = await client.users.info({user: message.user})
@@ -104,12 +95,13 @@ async function slackBotInit () {
         }
     });
 
-
-    const port = 8080
-    // Start your app
-    await app.start(process.env.PORT || port);
-    console.log(`⚡️ Slack Bolt app is running on port ${port}!`);
 }
+
+
+let mergedChannelId = process.env.MERGED_CHANNEL_ID
+// let logChannelId = process.env.LOGS_CHANNEL_ID
+let logString = ""
+
 
 async function accessSecretVersion (name) {
     const client = new SecretManagerServiceClient()
@@ -124,7 +116,22 @@ async function accessSecretVersion (name) {
     return payload
 }
 
-slackBotInit()
+(async () => {
+    const port = 8080
+    // Initializes your app with your bot token and signing secret
+    const app = new App({
+        token: await accessSecretVersion('bot-token'),
+        signingSecret: await accessSecretVersion('client-signing-secret')
+        // socketMode:true, // enable the following to use socket mode
+        // appToken: process.env.APP_TOKEN
+    });
+    // Start your app
+    initApp(app);
+    await app.start(process.env.PORT || port);
+    console.log(`⚡️ Slack Bolt app is running on port ${port}!`);
+})();
+
+
 
 
 
