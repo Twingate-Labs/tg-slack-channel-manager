@@ -1,4 +1,4 @@
-FROM node:10-slim
+FROM node:16
 
 # Install app dependencies.
 COPY package.json /src/package.json
@@ -7,5 +7,5 @@ RUN npm install
 
 # Bundle app source.
 COPY app.js /src
-EXPOSE 8080
+#EXPOSE 8080
 CMD ["node", "app"]
