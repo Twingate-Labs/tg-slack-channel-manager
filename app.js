@@ -12,6 +12,11 @@ const app = new App({
     // appToken: process.env.APP_TOKEN
 });
 
+console.log("---------------")
+console.log(getToken())
+console.log(getSigningSecret())
+console.log("---------------")
+
 
 let mergedChannelId = process.env.MERGED_CHANNEL_ID
 // let logChannelId = process.env.LOGS_CHANNEL_ID
