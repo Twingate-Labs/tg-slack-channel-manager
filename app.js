@@ -1,14 +1,13 @@
 const { App } = require("@slack/bolt");
 const fs = require('fs');
 require("dotenv").config();
-const updateDotenv = require('update-dotenv')
+const updateDotenv = require('update-dotenv');
 const {SecretManagerServiceClient} = require('@google-cloud/secret-manager');
-
 
 // Initializes your app with your bot token and signing secret
 const app = new App({
-    token: await accessSecretVersion('bot-token'),
-    signingSecret: await accessSecretVersion('client-signing-secret'),
+    token: getToken(),
+    signingSecret: getSigningSecret(),
     // socketMode:true, // enable the following to use socket mode
     // appToken: process.env.APP_TOKEN
 });
@@ -106,26 +105,6 @@ app.event('channel_created', async ({ event, client, logger }) => {
 });
 
 
-
-
-(async () => {
-    const port = 3000
-    // Start your app
-    await app.start(process.env.PORT || port);
-    console.log(`⚡️ Slack Bolt app is running on port ${port}!`);
-})();
-
-
-app.command("/twingate_test", async ({ command, ack, client,say }) => {
-    try {
-        await ack();
-        say("response");
-    } catch (error) {
-        console.log("err")
-        console.error(error);
-    }
-});
-
 async function accessSecretVersion (name) {
     const client = new SecretManagerServiceClient()
     const projectId = process.env.PROJECT_ID
@@ -138,6 +117,23 @@ async function accessSecretVersion (name) {
 
     return payload
 }
+
+(async () => {
+    const port = 3000
+    // Start your app
+    await app.start(process.env.PORT || port);
+    console.log(`⚡️ Slack Bolt app is running on port ${port}!`);
+})();
+
+
+async function getToken() {
+    return await accessSecretVersion('bot-token')
+}
+
+async function getSigningSecret() {
+    return await accessSecretVersion('client-signing-secret')
+}
+
 
 
 
