@@ -1,4 +1,4 @@
-FROM node:16
+FROM node:latest
 
 # Install app dependencies.
 COPY package.json /src/package.json
