@@ -61,8 +61,8 @@ async function initApp(app){
                 case channelResult.channel.name.startsWith("ext-partner-"):
                     await client.chat.postMessage({
                         channel: extPartnerAllId,
-                        unfurl_links: false,
-                        unfurl_media: false,
+                        unfurl_links: true,
+                        unfurl_media: true,
                         text: `Message from <${chatResult.permalink}|${channelResult.channel.name}>`
                     });
                     logString = `new msg added from <${chatResult.permalink}|${channelResult.channel.name}> said: ${message.text}`
@@ -71,8 +71,8 @@ async function initApp(app){
                 case channelResult.channel.name.startsWith("ext-"):
                     await client.chat.postMessage({
                         channel: extAllId,
-                        unfurl_links: false,
-                        unfurl_media: false,
+                        unfurl_links: true,
+                        unfurl_media: true,
                         text: `Message from <${chatResult.permalink}|${channelResult.channel.name}>`
                     });
                     logString = `new msg added from <${chatResult.permalink}|${channelResult.channel.name}> said: ${message.text}`
