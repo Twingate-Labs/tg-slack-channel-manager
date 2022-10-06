@@ -1,41 +1,42 @@
 display_information:
-  name: channel merge
+  name: Twingate Channel Manager
+  description: Twingate Channel Manager
+  background_color: "#040a1a"
 features:
   bot_user:
-    display_name: channel merge
+    display_name: Twingate Channel Manager
     always_online: false
   slash_commands:
-    - command: /twingate_add_all_ext_channel
+    - command: /twingate_channel_merge_setup
+      url: https://584a-137-220-73-91.ngrok.io/slack/events
       description: Add all ext- channels
       should_escape: false
-    - command: /twingate_create_logs_channel
-      description: Create log channel
-      should_escape: false
-    - command: /twingate_create_ext_all_channel
-      description: Create ext-all channel
+    - command: /twingate_add_all_ext_channel
+      url: https://584a-137-220-73-91.ngrok.io/slack/events
+      description: Add all ext- channels
       should_escape: false
 oauth_config:
   scopes:
     bot:
-      - commands
-      - app_mentions:read
       - channels:history
       - channels:join
       - channels:manage
       - channels:read
       - chat:write
-      - users:read
-      - users:read.email
+      - commands
+      - groups:history
       - im:history
+      - mpim:history
+      - users:read
 settings:
   event_subscriptions:
+    request_url: https://584a-137-220-73-91.ngrok.io/slack/events
     bot_events:
-      - app_mention
       - channel_created
       - message.channels
+      - message.groups
       - message.im
-  interactivity:
-    is_enabled: true
+      - message.mpim
   org_deploy_enabled: false
-  socket_mode_enabled: true
+  socket_mode_enabled: false
   token_rotation_enabled: false

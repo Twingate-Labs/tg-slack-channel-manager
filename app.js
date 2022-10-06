@@ -4,17 +4,37 @@ require("dotenv").config();
 const updateDotenv = require('update-dotenv');
 const {SecretManagerServiceClient} = require('@google-cloud/secret-manager');
 
-
-
 async function initApp(app){
-    let mergedChannelId = ""
+    let extAllId = ""
+    let extPartnerAllId = ""
     let logString = ""
 
-    const channels = await app.client.conversations.list()
+    const channels = await app.client.conversations.list({limit: 1000})
     const extAllChannel = channels.channels.filter(channel => channel.name === "ext-all")[0]
     if (extAllChannel !== undefined){
-        mergedChannelId = extAllChannel.id
-        console.log(`[INFO] Setting ext-all channel ID: ${mergedChannelId}`)
+        extAllId = extAllChannel.id
+        console.log(`[INFO] Setting ext-all channel ID: ${extAllId}`)
+
+        const extChannels = channels.channels.filter(x => x.name.startsWith("ext-") && x.name !== "ext-all" && x.name !== "ext-all-partner")
+        let channelJoinResult = ""
+        for (const channel of extChannels) {
+            channelJoinResult = await app.client.conversations.join({channel: channel.id})
+            logString = `Bot joined channel ${channel.id}`
+            console.log(logString)
+        }
+    }
+    const extPartnerAllChannel = channels.channels.filter(channel => channel.name === "ext-partner-all")[0]
+    if (extPartnerAllChannel !== undefined){
+        extPartnerAllId = extPartnerAllChannel.id
+        console.log(`[INFO] Setting ext--partner-all channel ID: ${extPartnerAllId}`)
+
+        const extChannels = channels.channels.filter(x => x.name.startsWith("ext-") && x.name !== "ext-all" && x.name !== "ext-all-partner")
+        let channelJoinResult = ""
+        for (const channel of extChannels) {
+            channelJoinResult = await app.client.conversations.join({channel: channel.id})
+            logString = `Bot joined channel ${channel.id}`
+            console.log(logString)
+        }
     }
 
     app.message('', async ({ message, client, say,logger }) => {
@@ -22,32 +42,57 @@ async function initApp(app){
         const channelResult = await client.conversations.info({channel: message.channel})
         const chatResult = await client.chat.getPermalink({channel: channelResult.channel.id,message_ts: message.ts})
 
-        if (channelResult.channel.name.startsWith("ext-") && !channelResult.channel.name.startsWith("ext-all")) {
-            const result = await client.chat.postMessage({
-                channel: mergedChannelId,
-                text: `${userResult.user.real_name} from <${chatResult.permalink}|${channelResult.channel.name}>`
-            });
-            logString = `new msg added ${userResult.user.real_name} from <${chatResult.permalink}|${channelResult.channel.name}> said: ${message.text}`
-            logger.info(logString)
-        } else if (channelResult.channel.name.startsWith("ext-all")){
-            logString = `Channel name ${channelResult.channel.name} starts with ext-all, message Ignored`
-            logger.info(logString)
-        } else {
-            logString = `Channel name ${channelResult.channel.name} does not starts with ext-, message Ignored`
-            logger.info(logString)
+        switch (true){
+            case channelResult.channel.name.startsWith("ext-all"):
+                logString = `Channel name ${channelResult.channel.name} starts with ext-all, message Ignored`
+                logger.info(logString)
+                break
+            case channelResult.channel.name.startsWith("ext-partner-all"):
+                logString = `Channel name ${channelResult.channel.name} starts with ext-partner-all, message Ignored`
+                logger.info(logString)
+                break
+            case channelResult.channel.name.startsWith("ext-partner-"):
+                await client.chat.postMessage({
+                    channel: extPartnerAllId,
+                    text: `${userResult.user.real_name} from <${chatResult.permalink}|${channelResult.channel.name}>`
+                });
+                logString = `new msg added ${userResult.user.real_name} from <${chatResult.permalink}|${channelResult.channel.name}> said: ${message.text}`
+                logger.info(logString)
+                break
+            case channelResult.channel.name.startsWith("ext-"):
+                await client.chat.postMessage({
+                    channel: extAllId,
+                    text: `${userResult.user.real_name} from <${chatResult.permalink}|${channelResult.channel.name}>`
+                });
+                logString = `new msg added ${userResult.user.real_name} from <${chatResult.permalink}|${channelResult.channel.name}> said: ${message.text}`
+                logger.info(logString)
+                break
+            default:
+                logString = `Channel name ${channelResult.channel.name} does not starts with ext-, message Ignored`
+                logger.info(logString)
+                break
         }
     });
 
     app.command("/twingate_channel_merge_setup", async ({ command, ack, client,say ,logger}) => {
         try {
             await ack();
-            const channelCreateResult = await client.conversations.create({name: "ext-all"})
-            mergedChannelId = channelCreateResult.channel.id
-            logString = `channel ext-all has been created with id ${channelCreateResult.channel.id}`
+            const extAllCreateResult = await client.conversations.create({name: "ext-all"})
+            extAllId = extAllCreateResult.channel.id
+            logString = `channel ext-all has been created with id ${extAllCreateResult.channel.id}`
             logger.info(logString)
-            const addUserResult = await client.conversations.invite({channel: channelCreateResult.channel.id, users: command.user_id})
+            const extAllAddUserResult = await client.conversations.invite({channel: extAllCreateResult.channel.id, users: command.user_id})
             logString = `added command issue user ${command.user_name} to ext-all channel`
             logger.info(logString)
+
+            const extPartnerAllCreateResult = await client.conversations.create({name: "ext-partner-all"})
+            extPartnerAllId = extPartnerAllCreateResult.channel.id
+            logString = `channel ext-all has been created with id ${extPartnerAllCreateResult.channel.id}`
+            logger.info(logString)
+            const extPartnerAllAddUserResult = await client.conversations.invite({channel: extPartnerAllCreateResult.channel.id, users: command.user_id})
+            logString = `added command issue user ${command.user_name} to ext-all channel`
+            logger.info(logString)
+
 
             const allChannelsResult = await client.conversations.list({limit: 1000})
             const extChannels = allChannelsResult.channels.filter(x => x.name.startsWith("ext-") && !x.name.startsWith("ext-all"))
@@ -68,7 +113,7 @@ async function initApp(app){
         try {
             await ack();
             const allChannelsResult = await client.conversations.list({limit: 1000})
-            const extChannels = allChannelsResult.channels.filter(x => x.name.startsWith("ext-") && !x.name.startsWith("ext-all"))
+            const extChannels = allChannelsResult.channels.filter(x => x.name.startsWith("ext-") && x.name !== "ext-all" && x.name !== "ext-all-partner")
             let channelJoinResult = ""
             for (const channel of extChannels) {
                 channelJoinResult = await client.conversations.join({channel: channel.id})
@@ -82,7 +127,7 @@ async function initApp(app){
 
     app.event('channel_created', async ({ event, client, logger }) => {
         try {
-            if (event.channel.name.startsWith("ext-") && !event.channel.name.startsWith("ext-all")){
+            if (event.channel.name.startsWith("ext-")  && event.name !== "ext-all" && event.name !== "ext-all-partner"){
                 const joinChannelResult = await client.conversations.join({channel: event.channel.id})
                 logString = `Bot joined channel ${event.channel.name}`
                 logger.info(logString)
@@ -95,10 +140,7 @@ async function initApp(app){
             logger.error(error);
         }
     });
-
 }
-
-
 
 async function accessSecretVersion (name) {
     const client = new SecretManagerServiceClient()

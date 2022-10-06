@@ -7,5 +7,4 @@ RUN npm install
 
 # Bundle app source.
 COPY app.js /src
-#EXPOSE 8080
 CMD ["node", "app"]
