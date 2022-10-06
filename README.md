@@ -54,4 +54,12 @@ This project deploys a Slackbot to Google Cloud Run, which allows Twingate to ce
    * Replace the Request URL of all slash commands to `https://slack-bot-ext-merge-test-xxxxx-nw.a.run.app/slack/events`
 3. Event Subscription
    * Replace the Request URL to `https://slack-bot-ext-merge-test-xxxxx-nw.a.run.app/slack/events`
-* Download the [Twingate Logo](https://github.com/Twingate-Labs/slack-bot-ext-merge/blob/master/Twingate%20Logo%20%E2%80%93%C2%A0Icon.png) and change the logo of the Slack app at the Basic Info
+4. Download the [Twingate Logo](https://github.com/Twingate-Labs/slack-bot-ext-merge/blob/master/Twingate%20Logo%20%E2%80%93%C2%A0Icon.png) and change the logo of the Slack app at the Basic Info
+
+### Initial Setup
+1. Within your Slack Workspace, type `/twingate_channel_merge_setup`
+2. ext-all and ext-partner channels should be created
+3. Add the users into the ext-all and ext-partner channels
+4. Modify the notification of these two channels based on requirement (e.g. only mention or all messages)
+5. The Bot user should start joining all ext- channels
+6. For the best User experience, make sure [Share links and set preview preferences](https://slack.com/intl/en-gb/help/articles/204399343-Share-links-and-set-preview-preferences#:~:text=From%20your%20desktop%2C%20click%20on,text%20previews%20of%20linked%20websites.) is enabled.

@@ -1,7 +1,4 @@
 const { App } = require("@slack/bolt");
-const fs = require('fs');
-require("dotenv").config();
-const updateDotenv = require('update-dotenv');
 const {SecretManagerServiceClient} = require('@google-cloud/secret-manager');
 
 async function initApp(app){
@@ -50,35 +47,44 @@ async function initApp(app){
         const channelResult = await client.conversations.info({channel: message.channel})
         const chatResult = await client.chat.getPermalink({channel: channelResult.channel.id,message_ts: message.ts})
 
-        switch (true){
-            case channelResult.channel.name.startsWith("ext-all"):
-                logString = `Channel name ${channelResult.channel.name} starts with ext-all, message Ignored`
-                logger.info(logString)
-                break
-            case channelResult.channel.name.startsWith("ext-partner-all"):
-                logString = `Channel name ${channelResult.channel.name} starts with ext-partner-all, message Ignored`
-                logger.info(logString)
-                break
-            case channelResult.channel.name.startsWith("ext-partner-"):
-                await client.chat.postMessage({
-                    channel: extPartnerAllId,
-                    text: `${userResult.user.real_name} from <${chatResult.permalink}|${channelResult.channel.name}>`
-                });
-                logString = `new msg added ${userResult.user.real_name} from <${chatResult.permalink}|${channelResult.channel.name}> said: ${message.text}`
-                logger.info(logString)
-                break
-            case channelResult.channel.name.startsWith("ext-"):
-                await client.chat.postMessage({
-                    channel: extAllId,
-                    text: `${userResult.user.real_name} from <${chatResult.permalink}|${channelResult.channel.name}>`
-                });
-                logString = `new msg added ${userResult.user.real_name} from <${chatResult.permalink}|${channelResult.channel.name}> said: ${message.text}`
-                logger.info(logString)
-                break
-            default:
-                logString = `Channel name ${channelResult.channel.name} does not starts with ext-, message Ignored`
-                logger.info(logString)
-                break
+        if (userResult.user.real_name === undefined){
+        // if (true){
+            switch (true){
+                case channelResult.channel.name.startsWith("ext-all"):
+                    logString = `Channel name ${channelResult.channel.name} starts with ext-all, message Ignored`
+                    logger.info(logString)
+                    break
+                case channelResult.channel.name.startsWith("ext-partner-all"):
+                    logString = `Channel name ${channelResult.channel.name} starts with ext-partner-all, message Ignored`
+                    logger.info(logString)
+                    break
+                case channelResult.channel.name.startsWith("ext-partner-"):
+                    await client.chat.postMessage({
+                        channel: extPartnerAllId,
+                        unfurl_links: false,
+                        unfurl_media: false,
+                        text: `Message from <${chatResult.permalink}|${channelResult.channel.name}>`
+                    });
+                    logString = `new msg added from <${chatResult.permalink}|${channelResult.channel.name}> said: ${message.text}`
+                    logger.info(logString)
+                    break
+                case channelResult.channel.name.startsWith("ext-"):
+                    await client.chat.postMessage({
+                        channel: extAllId,
+                        unfurl_links: false,
+                        unfurl_media: false,
+                        text: `Message from <${chatResult.permalink}|${channelResult.channel.name}>`
+                    });
+                    logString = `new msg added from <${chatResult.permalink}|${channelResult.channel.name}> said: ${message.text}`
+                    logger.info(logString)
+                    break
+                default:
+                    logString = `Channel name ${channelResult.channel.name} does not starts with ext-, message Ignored`
+                    logger.info(logString)
+                    break
+            }
+        } else {
+            logger.info("Skip message, as it is from internal user.")
         }
     });
 
