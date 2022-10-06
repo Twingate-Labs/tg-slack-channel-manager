@@ -54,4 +54,4 @@ This project deploys a Slackbot to Google Cloud Run, which allows Twingate to ce
    * Replace the Request URL of all slash commands to `https://slack-bot-ext-merge-test-xxxxx-nw.a.run.app/slack/events`
 3. Event Subscription
    * Replace the Request URL to `https://slack-bot-ext-merge-test-xxxxx-nw.a.run.app/slack/events`
-* Download the Twingate Logo
+* Download the [Twingate Logo](https://github.com/Twingate-Labs/slack-bot-ext-merge/blob/master/Twingate%20Logo%20%E2%80%93%C2%A0Icon.png) and change the logo of the Slack app at the Basic Info

@@ -18,9 +18,13 @@ async function initApp(app){
         const extChannels = channels.channels.filter(x => x.name.startsWith("ext-") && x.name !== "ext-all" && x.name !== "ext-all-partner")
         let channelJoinResult = ""
         for (const channel of extChannels) {
-            channelJoinResult = await app.client.conversations.join({channel: channel.id})
-            logString = `Bot joined channel ${channel.id}`
-            console.log(logString)
+            try {
+                channelJoinResult = await app.client.conversations.join({channel: channel.id})
+                logString = `Bot joined channel ${channel.id}`
+                console.log(logString)
+            } catch (error) {
+                console.log(error);
+            }
         }
     }
     const extPartnerAllChannel = channels.channels.filter(channel => channel.name === "ext-partner-all")[0]
@@ -31,9 +35,13 @@ async function initApp(app){
         const extChannels = channels.channels.filter(x => x.name.startsWith("ext-") && x.name !== "ext-all" && x.name !== "ext-all-partner")
         let channelJoinResult = ""
         for (const channel of extChannels) {
-            channelJoinResult = await app.client.conversations.join({channel: channel.id})
-            logString = `Bot joined channel ${channel.id}`
-            console.log(logString)
+            try {
+                channelJoinResult = await app.client.conversations.join({channel: channel.id})
+                logString = `Bot joined channel ${channel.id}`
+                console.log(logString)
+            } catch (error) {
+                console.log(error);
+            }
         }
     }
 
@@ -98,9 +106,13 @@ async function initApp(app){
             const extChannels = allChannelsResult.channels.filter(x => x.name.startsWith("ext-") && !x.name.startsWith("ext-all"))
             let channelJoinResult = ""
             for (const channel of extChannels) {
-                channelJoinResult = await client.conversations.join({channel: channel.id})
-                logString = `Bot joined channel ${channel.id}`
-                logger.info(logString)
+                try {
+                    channelJoinResult = await client.conversations.join({channel: channel.id})
+                    logString = `Bot joined channel ${channel.id}`
+                    logger.info(logString)
+                } catch (error) {
+                    console.log(error);
+                }
             }
         } catch (error) {
             logger.error(error);
@@ -116,9 +128,13 @@ async function initApp(app){
             const extChannels = allChannelsResult.channels.filter(x => x.name.startsWith("ext-") && x.name !== "ext-all" && x.name !== "ext-all-partner")
             let channelJoinResult = ""
             for (const channel of extChannels) {
-                channelJoinResult = await client.conversations.join({channel: channel.id})
-                logString = `Bot joined channel ${channel.id}`
-                logger.info(logString)
+                try {
+                    channelJoinResult = await client.conversations.join({channel: channel.id})
+                    logString = `Bot joined channel ${channel.id}`
+                    logger.info(logString)
+                } catch (error) {
+                    console.log(error);
+                }
             }
         } catch (error) {
             logger.error(error);
