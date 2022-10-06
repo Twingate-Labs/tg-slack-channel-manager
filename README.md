@@ -46,7 +46,12 @@ This project deploys a Slackbot to Google Cloud Run, which allows Twingate to ce
 ```
 
 6. Select `Yes` to `Allow unauthenticated invocations to [tg-channel-merge]`
+7. Copy out the URL of the Slack app, e.g. `https://slack-bot-ext-merge-test-xxxxx-nw.a.run.app`
 
 ### Finishing Setup in Slack App UI
 1. Go to your app at [Slack App UI](https://api.slack.com/apps)
-2. 
+2. Slack commands
+   * Replace the Request URL of all slash commands to `https://slack-bot-ext-merge-test-xxxxx-nw.a.run.app/slack/events`
+3. Event Subscription
+   * Replace the Request URL to `https://slack-bot-ext-merge-test-xxxxx-nw.a.run.app/slack/events`
+* Download the Twingate Logo
