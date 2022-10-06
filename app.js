@@ -155,8 +155,8 @@ async function accessSecretVersion (name) {
 (async () => {
     const port = 8080
     const app = new App({
-        token: await accessSecretVersion('bot-token'),
-        signingSecret: await accessSecretVersion('client-signing-secret')
+        token: await accessSecretVersion('tg-channel-merge-bot-token'),
+        signingSecret: await accessSecretVersion('tg-channel-merge-client-signing-secret')
     });
     await initApp(app);
     await app.start(process.env.PORT || port);
