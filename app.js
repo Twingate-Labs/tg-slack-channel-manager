@@ -6,13 +6,13 @@ async function initApp(app){
     let extPartnerAllId = ""
     let logString = ""
 
-    const channels = await app.client.conversations.list({limit: 1000})
+    const channels = await app.client.conversations.list({limit: 1000, exclude_archived: true})
     const extAllChannel = channels.channels.filter(channel => channel.name === "ext-all")[0]
     if (extAllChannel !== undefined){
         extAllId = extAllChannel.id
         console.log(`[INFO] Setting ext-all channel ID: ${extAllId}`)
 
-        const extChannels = channels.channels.filter(x => x.name.startsWith("ext-") && x.name !== "ext-all" && x.name !== "ext-all-partner")
+        const extChannels = channels.channels.filter(x => x.name.startsWith("ext-") && x.is_member !== true && x.name !== "ext-all" && x.name !== "ext-partner-all")
         let channelJoinResult = ""
         for (const channel of extChannels) {
             try {
@@ -28,21 +28,10 @@ async function initApp(app){
     if (extPartnerAllChannel !== undefined){
         extPartnerAllId = extPartnerAllChannel.id
         console.log(`[INFO] Setting ext--partner-all channel ID: ${extPartnerAllId}`)
-
-        const extChannels = channels.channels.filter(x => x.name.startsWith("ext-") && x.name !== "ext-all" && x.name !== "ext-all-partner")
-        let channelJoinResult = ""
-        for (const channel of extChannels) {
-            try {
-                channelJoinResult = await app.client.conversations.join({channel: channel.id})
-                logString = `Bot joined channel ${channel.id}`
-                console.log(logString)
-            } catch (error) {
-                console.log(error);
-            }
-        }
     }
 
     app.message('', async ({ message, client, say,logger }) => {
+        logger.info(message)
         const userResult = await client.users.info({user: message.user})
         const channelResult = await client.conversations.info({channel: message.channel})
         const chatResult = await client.chat.getPermalink({channel: channelResult.channel.id,message_ts: message.ts})
@@ -59,24 +48,32 @@ async function initApp(app){
                     logger.info(logString)
                     break
                 case channelResult.channel.name.startsWith("ext-partner-"):
-                    await client.chat.postMessage({
-                        channel: extPartnerAllId,
-                        unfurl_links: true,
-                        unfurl_media: true,
-                        text: `Message from <${chatResult.permalink}|${channelResult.channel.name}>`
-                    });
-                    logString = `new msg added from <${chatResult.permalink}|${channelResult.channel.name}> said: ${message.text}`
-                    logger.info(logString)
+                    if(message.text.includes("> has joined the channel" || message.text.includes("> has left the channel"))){
+                        logger.info("Skipping, joining and leaving channel message")
+                    } else {
+                        await client.chat.postMessage({
+                            channel: extPartnerAllId,
+                            unfurl_links: true,
+                            unfurl_media: true,
+                            text: `Message from <${chatResult.permalink}|${channelResult.channel.name}>`
+                        });
+                        logString = `new msg added from <${chatResult.permalink}|${channelResult.channel.name}> said: ${message.text}`
+                        logger.info(logString)
+                    }
                     break
                 case channelResult.channel.name.startsWith("ext-"):
-                    await client.chat.postMessage({
-                        channel: extAllId,
-                        unfurl_links: true,
-                        unfurl_media: true,
-                        text: `Message from <${chatResult.permalink}|${channelResult.channel.name}>`
-                    });
-                    logString = `new msg added from <${chatResult.permalink}|${channelResult.channel.name}> said: ${message.text}`
-                    logger.info(logString)
+                    if(message.text.includes("> has joined the channel" || message.text.includes("> has left the channel"))){
+                        logger.info("Skipping, joining and leaving channel message")
+                    } else {
+                        await client.chat.postMessage({
+                            channel: extAllId,
+                            unfurl_links: true,
+                            unfurl_media: true,
+                            text: `Message from <${chatResult.permalink}|${channelResult.channel.name}>`
+                        });
+                        logString = `new msg added from <${chatResult.permalink}|${channelResult.channel.name}> said: ${message.text}`
+                        logger.info(logString)
+                    }
                     break
                 default:
                     logString = `Channel name ${channelResult.channel.name} does not starts with ext-, message Ignored`
@@ -108,8 +105,8 @@ async function initApp(app){
             logger.info(logString)
 
 
-            const allChannelsResult = await client.conversations.list({limit: 1000})
-            const extChannels = allChannelsResult.channels.filter(x => x.name.startsWith("ext-") && !x.name.startsWith("ext-all"))
+            const allChannelsResult = await client.conversations.list({limit: 1000, exclude_archived: true})
+            const extChannels = allChannelsResult.channels.filter(x => x.name.startsWith("ext-") && x.is_member !== true && x.name !== "ext-all" && x.name !== "ext-partner-all")
             let channelJoinResult = ""
             for (const channel of extChannels) {
                 try {
@@ -130,8 +127,8 @@ async function initApp(app){
     app.command("/twingate_add_all_ext_channel", async ({ command, ack, client,say ,logger}) => {
         try {
             await ack();
-            const allChannelsResult = await client.conversations.list({limit: 1000})
-            const extChannels = allChannelsResult.channels.filter(x => x.name.startsWith("ext-") && x.name !== "ext-all" && x.name !== "ext-all-partner")
+            const allChannelsResult = await client.conversations.list({limit: 1000, exclude_archived: true})
+            const extChannels = allChannelsResult.channels.filter(x => x.name.startsWith("ext-") && x.is_member !== true && x.name !== "ext-all" && x.name !== "ext-partner-all")
             let channelJoinResult = ""
             for (const channel of extChannels) {
                 try {
@@ -149,7 +146,7 @@ async function initApp(app){
 
     app.event('channel_created', async ({ event, client, logger }) => {
         try {
-            if (event.channel.name.startsWith("ext-")  && event.name !== "ext-all" && event.name !== "ext-all-partner"){
+            if (event.channel.name.startsWith("ext-")  && event.name !== "ext-all" && event.name !== "ext-partner-all"){
                 const joinChannelResult = await client.conversations.join({channel: event.channel.id})
                 logString = `Bot joined channel ${event.channel.name}`
                 logger.info(logString)
