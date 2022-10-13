@@ -30,8 +30,7 @@ async function initApp(app){
         console.log(`[INFO] Setting ext--partner-all channel ID: ${extPartnerAllId}`)
     }
 
-    app.message('', async ({ message, ack, client, say,logger }) => {
-        await ack()
+    app.message('', async ({ message, client, say,logger }) => {
         logger.info(message)
         if (message.subtype !== "bot_message"){
             const userResult = await client.users.info({user: message.user})
