@@ -30,59 +30,66 @@ async function initApp(app){
         console.log(`[INFO] Setting ext--partner-all channel ID: ${extPartnerAllId}`)
     }
 
-    app.message('', async ({ message, client, say,logger }) => {
+    app.message('', async ({ message, ack, client, say,logger }) => {
+        await ack()
         logger.info(message)
-        const userResult = await client.users.info({user: message.user})
-        const channelResult = await client.conversations.info({channel: message.channel})
-        const chatResult = await client.chat.getPermalink({channel: channelResult.channel.id,message_ts: message.ts})
-
-        if (userResult.user.real_name === undefined){
-        // if (true){
-            switch (true){
-                case channelResult.channel.name.startsWith("ext-all"):
-                    logString = `Channel name ${channelResult.channel.name} starts with ext-all, message Ignored`
-                    logger.info(logString)
-                    break
-                case channelResult.channel.name.startsWith("ext-partner-all"):
-                    logString = `Channel name ${channelResult.channel.name} starts with ext-partner-all, message Ignored`
-                    logger.info(logString)
-                    break
-                case channelResult.channel.name.startsWith("ext-partner-"):
-                    if(message.text.includes("> has joined the channel" || message.text.includes("> has left the channel"))){
-                        logger.info("Skipping, joining and leaving channel message")
-                    } else {
-                        await client.chat.postMessage({
-                            channel: extPartnerAllId,
-                            unfurl_links: true,
-                            unfurl_media: true,
-                            text: `Message from <${chatResult.permalink}|${channelResult.channel.name}>`
-                        });
-                        logString = `new msg added from <${chatResult.permalink}|${channelResult.channel.name}> said: ${message.text}`
+        if (message.subtype !== "bot_message"){
+            const userResult = await client.users.info({user: message.user})
+            const channelResult = await client.conversations.info({channel: message.channel})
+            const chatResult = await client.chat.getPermalink({channel: channelResult.channel.id,message_ts: message.ts})
+            if (userResult.user.real_name === undefined){
+            // if (true){
+                switch (true){
+                    case channelResult.channel.name.startsWith("ext-all"):
+                        logString = `Channel name ${channelResult.channel.name} starts with ext-all, message Ignored`
                         logger.info(logString)
-                    }
-                    break
-                case channelResult.channel.name.startsWith("ext-"):
-                    if(message.text.includes("> has joined the channel" || message.text.includes("> has left the channel"))){
-                        logger.info("Skipping, joining and leaving channel message")
-                    } else {
-                        await client.chat.postMessage({
-                            channel: extAllId,
-                            unfurl_links: true,
-                            unfurl_media: true,
-                            text: `Message from <${chatResult.permalink}|${channelResult.channel.name}>`
-                        });
-                        logString = `new msg added from <${chatResult.permalink}|${channelResult.channel.name}> said: ${message.text}`
+                        break
+                    case channelResult.channel.name.startsWith("ext-partner-all"):
+                        logString = `Channel name ${channelResult.channel.name} starts with ext-partner-all, message Ignored`
                         logger.info(logString)
-                    }
-                    break
-                default:
-                    logString = `Channel name ${channelResult.channel.name} does not starts with ext-, message Ignored`
-                    logger.info(logString)
-                    break
+                        break
+                    case channelResult.channel.name.startsWith("ext-partner-"):
+                        if(message.text.includes("> has joined the channel" || message.text.includes("> has left the channel"))){
+                            logger.info("Skipping, joining and leaving channel message")
+                        } else {
+                            await client.chat.postMessage({
+                                channel: extPartnerAllId,
+                                unfurl_links: true,
+                                unfurl_media: true,
+                                text: `Message from <${chatResult.permalink}|${channelResult.channel.name}>`
+                            });
+                            logString = `new msg added from <${chatResult.permalink}|${channelResult.channel.name}> said: ${message.text}`
+                            logger.info(logString)
+                        }
+                        break
+                    case channelResult.channel.name.startsWith("ext-"):
+                        if(message.text.includes("> has joined the channel" || message.text.includes("> has left the channel"))){
+                            logger.info("Skipping, joining and leaving channel message")
+                        } else {
+                            await client.chat.postMessage({
+                                channel: extAllId,
+                                unfurl_links: true,
+                                unfurl_media: true,
+                                text: `Message from <${chatResult.permalink}|${channelResult.channel.name}>`
+                            });
+                            logString = `new msg added from <${chatResult.permalink}|${channelResult.channel.name}> said: ${message.text}`
+                            logger.info(logString)
+                        }
+                        break
+                    default:
+                        logString = `Channel name ${channelResult.channel.name} does not starts with ext-, message Ignored`
+                        logger.info(logString)
+                        break
+                }
+            } else {
+                logger.info("Skip message, as it is from internal user.")
             }
         } else {
-            logger.info("Skip message, as it is from internal user.")
+            logger.info("Skip message, as it is from bot.")
         }
+
+
+
     });
 
     app.command("/twingate_channel_merge_setup", async ({ command, ack, client,say ,logger}) => {
