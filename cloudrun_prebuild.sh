@@ -17,5 +17,5 @@ gcloud projects add-iam-policy-binding $PROJECT_ID --member=serviceAccount:$SERV
 
 ## Enable and setup secret manager
 gcloud services enable secretmanager.googleapis.com
-echo -n $SLACK_BOT_TOKEN | gcloud secrets create tg-group-profile-manager-bot-token --project "$PROJECT_ID" --replication-policy=automatic --data-file=-
-echo -n $SLACK_SIGNING_SECRET | gcloud secrets create tg-group-profile-manager-client-signing-secret --project "$PROJECT_ID" --replication-policy=automatic --data-file=-
+echo -n $SLACK_BOT_TOKEN | gcloud secrets create tg-slack-channel-manager-bot-token --project "$PROJECT_ID" --replication-policy=automatic --data-file=-
+echo -n $SLACK_SIGNING_SECRET | gcloud secrets create tg-slack-channel-client-signing-secret --project "$PROJECT_ID" --replication-policy=automatic --data-file=-

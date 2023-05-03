@@ -1,4 +1,4 @@
-# tg-group-profile-manager
+# tg-slack-channel-manager
 This repository consists of a Slackbot that forward all message from the Slacks channels (with prefixes `ext-` and `ext-partner`) to centralised Slack channels. 
 
 Our example consist of:
@@ -19,7 +19,7 @@ Our example consist of:
 4. Retrieve the _signing secret_ from the `Basic Information` page and _bot token_ from `OAuth & Permissions` page
 
 ### Configuration
-Please prepare the following configuration parameters (refer to the [example file](./tg-group-profile-manager.conf)):
+Please prepare the following configuration parameters (refer to the [example file](./tg-slack-channelmanager.conf)):
 - `SLACK_SECRET` Slack signing secret
 - `SLACK_BOT_TOKEN` Slack bot token (begins with `xoxb-`)
 
@@ -31,7 +31,7 @@ Please prepare the following configuration parameters (refer to the [example fil
    - Google Cloud project owner
 2. Click and follow the steps in GCP CloudShell, entering the configuration parameters when prompted:
 
-[![Run on Google Cloud](https://deploy.cloud.run/button.svg)](https://deploy.cloud.run?git_repo=https://github.com/Twingate-Labs/tg-group-profile-manager)
+[![Run on Google Cloud](https://deploy.cloud.run/button.svg)](https://deploy.cloud.run?git_repo=https://github.com/Twingate-Labs/tg-slack-channel-manager)
 
 The `Run on Google Cloud option` will prompt for all pre-requisite parameters during setup and store them as secrets. For a full description of the executed steps please see [`app.json`](./app.json).
 
