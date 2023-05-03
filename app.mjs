@@ -29,8 +29,8 @@ async function initApp(app, channelIds) {
             const chatResult = await client.chat.getPermalink({channel: channelResult.channel.id,message_ts: message.ts})
 
             // use field userResult.user.real_name to determine if the message is sent from an external user
-            // if (userResult.user.real_name === undefined){
-            if (true){
+            if (userResult.user.real_name === undefined){
+            // if (true){
                 switch (true){
                     case channelResult.channel.name.startsWith("ext-all"):
                         // message from ext-all, ignore

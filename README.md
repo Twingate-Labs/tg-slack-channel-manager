@@ -2,10 +2,10 @@
 This repository consists of a Slackbot that forward all message from the Slacks channels (with prefixes `ext-` and `ext-partner`) to centralised Slack channels. 
 
 Our example consist of:
-* Forward all external user messages from channels starts with `ext-partner-` to `ext-partner-all`
-* Forward all external user messages from channels starts with `ext-` (but not `ext-partner`) to `ext-all`
+* Forward all external user messages from channels starts with `ext-partner-*` to `ext-partner-all`
+* Forward all external user messages from channels starts with `ext-*` (but not `ext-partner`) to `ext-all`
 * Automatically detect/create `ext-all` and `ext-partner-all` channels on bot start up
-* Automatically monitoring any new `ext-` and `ext-partner` channels
+* Automatically monitoring any newly created `ext-*` and `ext-partner-*` channels
 
 ## Prerequisites
 1. Slack Workspace (with admin access to deploy)
@@ -40,6 +40,4 @@ For a manual deployment you may instead follow the [manual instructions](./docs/
 ### Complete setup in Slack App UI
 1. Go to your app at [Slack App UI](https://api.slack.com/apps)
 3. Event Subscription
-   * Replace the Request URL to `https://{Your tg-group-profile-manager URL}/slack/events`
-* Interactivity & Shortcuts
-   * Replace the Request URL to `https://{Your tg-group-profile-manager URL}/slack/events`
+   * Replace the Request URL to `https://{Your tg-slack-channel-manager URL}/slack/events`
