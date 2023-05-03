@@ -1,10 +1,10 @@
-FROM node:latest
+FROM node:18
 
 # Install app dependencies.
-COPY package.json /src/package.json
-WORKDIR /src
+WORKDIR /usr/src/app
+COPY package*.json ./
 RUN npm install
 
 # Bundle app source.
-COPY app.js.back /src
-CMD ["node", "app"]
+COPY . .
+CMD ["node", "app.mjs"]
