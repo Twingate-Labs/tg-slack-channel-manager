@@ -3,7 +3,7 @@ This repository consists of a Slackbot that forward all message from the Slacks 
 
 Our example consist of:
 * Forward all external user messages from channels starts with `ext-partner-*` to `ext-partner-all`
-* Forward all external user messages from channels starts with `ext-*` (but not `ext-partner`) to `ext-all`
+* Forward all external user messages from channels starts with `ext-*` (but not `ext-partner-*`) to `ext-all`
 * Automatically detect/create `ext-all` and `ext-partner-all` channels on bot start up
 * Automatically monitoring any newly created `ext-*` and `ext-partner-*` channels
 
