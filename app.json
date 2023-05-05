@@ -1,0 +1,41 @@
+{
+    "name": "tg-slack-channel-manager",
+    "env": {
+        "SLACK_SIGNING_SECRET": {
+            "description": "Slack Signing Secret",
+            "required": true,
+            "order": 10
+        },
+        "SLACK_BOT_TOKEN": {
+            "description": "Slack Bot Token",
+            "required": true,
+            "order": 20
+        },
+        "PROJECT_ID": {
+            "description": "GCP Project Id (used to reference the secrets via the app)",
+            "required": true,
+            "order": 60
+        }
+    },
+    "options": {
+        "allow-unauthenticated": true,
+        "memory": "512Mi",
+        "cpu": "1",
+        "http2": false
+    },
+    "build": {
+        "skip": false
+    },
+    "hooks": {
+        "prebuild": {
+            "commands": [
+                "./cloudrun_prebuild.sh"
+            ]
+        },
+        "postcreate": {
+            "commands": [
+                "gcloud run services update tg-group-profile-manager --no-cpu-throttling --project \"$GOOGLE_CLOUD_PROJECT\"",
+                "gcloud run services update tg-group-profile-manager --project \"$GOOGLE_CLOUD_PROJECT\" --remove-env-vars SLACK_BOT_TOKEN, SLACK_SIGNING_SECRET"            ]
+        }
+    }
+}
