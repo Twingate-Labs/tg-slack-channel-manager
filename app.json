@@ -34,8 +34,8 @@
         },
         "postcreate": {
             "commands": [
-                "gcloud run services update tg-group-profile-manager --no-cpu-throttling --project \"$GOOGLE_CLOUD_PROJECT\"",
-                "gcloud run services update tg-group-profile-manager --project \"$GOOGLE_CLOUD_PROJECT\" --remove-env-vars SLACK_BOT_TOKEN, SLACK_SIGNING_SECRET"            ]
+                "gcloud run services update tg-slack-channel-manager --no-cpu-throttling --project \"$GOOGLE_CLOUD_PROJECT\"",
+                "gcloud run services update tg-slack-channel-manager --project \"$GOOGLE_CLOUD_PROJECT\" --remove-env-vars SLACK_BOT_TOKEN,SLACK_SIGNING_SECRET"            ]
         }
     }
 }
