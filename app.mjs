@@ -126,8 +126,8 @@ async function channelSetup (app) {
     //todo: centralise all accessSecretVersion
     if (process.env.DEPLOY_ENV !== "docker") {
         [slackToken, slackSigningSecret] = [
-            await accessSecretVersion('tg-group-profile-manager-bot-token'),
-            await accessSecretVersion('tg-group-profile-manager-client-signing-secret')
+            await accessSecretVersion('tg-slack-channel-manager-bot-token'),
+            await accessSecretVersion('tg-slack-channel-manager-client-signing-secret')
         ]
     }
 
